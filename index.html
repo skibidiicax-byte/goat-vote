@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GOAT Vote</title>
+<style>
+body {
+    font-family: Arial;
+    background: #0f0f0f;
+    color: white;
+    text-align: center;
+    margin: 0;
+}
+
+h1 { margin-top: 30px; }
+
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.card {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
+    width: 220px;
+}
+
+button {
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.messi { background: #2d7dff; color: white; }
+.ronaldo { background: #ff3b3b; color: white; }
+
+.bar {
+    width: 60%;
+    height: 25px;
+    background: #333;
+    margin: 40px auto;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+}
+
+.mbar { background: #2d7dff; }
+.rbar { background: #ff3b3b; }
+
+.info {
+    margin-top: 10px;
+    opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+
+<h1>GOAT Debate</h1>
+<p class="info">One vote per device (account)</p>
+
+<div class="container">
+    <div class="card">
+        <h2>Messi</h2>
+        <button class="messi" onclick="vote('messi')" id="messiBtn">Vote Messi</button>
+        <p id="messiVotes">0</p>
+    </div>
+
+    <div class="card">
+        <h2>Ronaldo</h2>
+        <button class="ronaldo" onclick="vote('ronaldo')" id="ronaldoBtn">Vote Ronaldo</button>
+        <p id="ronaldoVotes">0</p>
+    </div>
+</div>
+
+<div class="bar">
+    <div id="mbar" class="mbar"></div>
+    <div id="rbar" class="rbar"></div>
+</div>
+
+<p>Total Votes: <span id="total">0</span></p>
+<p id="status"></p>
+
+<script>
+let messi = Number(localStorage.getItem("messiVotes")) || 0;
+let ronaldo = Number(localStorage.getItem("ronaldoVotes")) || 0;
+
+// "account lock"
+let userVote = localStorage.getItem("userVote");
+
+function update() {
+    document.getElementById("messiVotes").innerText = messi;
+    document.getElementById("ronaldoVotes").innerText = ronaldo;
+
+    let total = messi + ronaldo;
+    document.getElementById("total").innerText = total;
+
+    let mPercent = total ? (messi / total) * 100 : 50;
+    let rPercent = total ? (ronaldo / total) * 100 : 50;
+
+    document.getElementById("mbar").style.width = mPercent + "%";
+    document.getElementById("rbar").style.width = rPercent + "%";
+
+    if (userVote) {
+        document.getElementById("messiBtn").disabled = true;
+        document.getElementById("ronaldoBtn").disabled = true;
+
+        document.getElementById("status").innerText =
+            "You already voted for: " + userVote.toUpperCase();
+    }
+}
+
+function vote(choice) {
+    if (userVote) return;
+
+    if (choice === "messi") {
+        messi++;
+        localStorage.setItem("messiVotes", messi);
+    } else {
+        ronaldo++;
+        localStorage.setItem("ronaldoVotes", ronaldo);
+    }
+
+    localStorage.setItem("userVote", choice);
+    userVote = choice;
+
+    update();
+}
+
+update();
+</script>
+
+</body>
+</html>
